@@ -32,7 +32,7 @@ export const Navigation = ({ role }: NavigationProps) => {
   const items = navItems[role];
 
   return (
-    <nav className="w-64 border-r bg-card">
+    <nav className="hidden md:block w-64 border-r bg-card">
       <div className="flex flex-col gap-2 p-4">
         {items.map((item) => {
           const Icon = item.icon;

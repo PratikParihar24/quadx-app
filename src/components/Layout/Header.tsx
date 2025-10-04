@@ -1,4 +1,8 @@
-import { Bell } from 'lucide-react';
+import { Bell, LogOut } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -18,26 +22,41 @@ interface HeaderProps {
 }
 
 export const Header = ({ currentRole, onRoleChange }: HeaderProps) => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
   const user = getCurrentUser(currentRole);
   const notifications = getNotificationsByUser(user.id);
   const unreadCount = notifications.filter(n => !n.read).length;
 
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive',
+      });
+    } else {
+      navigate('/auth');
+    }
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center justify-between px-6">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-primary">
-            <span className="text-lg font-bold text-primary-foreground">Q</span>
+      <div className="container flex h-16 items-center justify-between px-4 md:px-6">
+        <div className="flex items-center gap-2 md:gap-3">
+          <div className="flex h-8 w-8 md:h-10 md:w-10 items-center justify-center rounded-lg bg-gradient-primary">
+            <span className="text-base md:text-lg font-bold text-primary-foreground">Q</span>
           </div>
-          <div>
-            <h1 className="text-xl font-bold">QuadX AscendFlow</h1>
+          <div className="hidden sm:block">
+            <h1 className="text-lg md:text-xl font-bold">QuadX AscendFlow</h1>
             <p className="text-xs text-muted-foreground">Expense Management Platform</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
           <Select value={currentRole} onValueChange={(value) => onRoleChange(value as UserRole)}>
-            <SelectTrigger className="w-40">
+            <SelectTrigger className="w-32 md:w-40">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -46,6 +65,8 @@ export const Header = ({ currentRole, onRoleChange }: HeaderProps) => {
               <SelectItem value="admin">Admin View</SelectItem>
             </SelectContent>
           </Select>
+
+          <ThemeToggle />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -93,10 +114,15 @@ export const Header = ({ currentRole, onRoleChange }: HeaderProps) => {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <div className="flex flex-col items-end">
+          <div className="hidden md:flex flex-col items-end">
             <span className="text-sm font-medium">{user.name}</span>
             <span className="text-xs text-muted-foreground capitalize">{user.role}</span>
           </div>
+
+          <Button variant="ghost" size="icon" onClick={handleLogout} className="h-9 w-9">
+            <LogOut className="h-4 w-4" />
+            <span className="sr-only">Logout</span>
+          </Button>
         </div>
       </div>
     </header>
