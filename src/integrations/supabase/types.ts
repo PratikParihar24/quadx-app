@@ -14,16 +14,279 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      approval_steps: {
+        Row: {
+          approver_id: string | null
+          approver_name: string | null
+          comments: string | null
+          expense_id: string
+          id: string
+          status: string
+          step_number: number
+          timestamp: string | null
+        }
+        Insert: {
+          approver_id?: string | null
+          approver_name?: string | null
+          comments?: string | null
+          expense_id: string
+          id?: string
+          status?: string
+          step_number: number
+          timestamp?: string | null
+        }
+        Update: {
+          approver_id?: string | null
+          approver_name?: string | null
+          comments?: string | null
+          expense_id?: string
+          id?: string
+          status?: string
+          step_number?: number
+          timestamp?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "approval_steps_approver_id_fkey"
+            columns: ["approver_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "approval_steps_expense_id_fkey"
+            columns: ["expense_id"]
+            isOneToOne: false
+            referencedRelation: "expenses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      companies: {
+        Row: {
+          base_currency: string
+          country: string | null
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          base_currency?: string
+          country?: string | null
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          base_currency?: string
+          country?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      expenses: {
+        Row: {
+          amount: number
+          base_currency_amount: number
+          category: string
+          company_id: string
+          created_at: string
+          currency: string
+          current_step_index: number
+          date: string
+          description: string
+          employee_id: string
+          id: string
+          receipt_url: string | null
+          status: Database["public"]["Enums"]["expense_status"]
+          submitted_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          base_currency_amount: number
+          category: string
+          company_id: string
+          created_at?: string
+          currency?: string
+          current_step_index?: number
+          date: string
+          description: string
+          employee_id: string
+          id?: string
+          receipt_url?: string | null
+          status?: Database["public"]["Enums"]["expense_status"]
+          submitted_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          base_currency_amount?: number
+          category?: string
+          company_id?: string
+          created_at?: string
+          currency?: string
+          current_step_index?: number
+          date?: string
+          description?: string
+          employee_id?: string
+          id?: string
+          receipt_url?: string | null
+          status?: Database["public"]["Enums"]["expense_status"]
+          submitted_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "expenses_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "expenses_employee_id_fkey"
+            columns: ["employee_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          expense_id: string | null
+          id: string
+          message: string
+          read: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expense_id?: string | null
+          id?: string
+          message: string
+          read?: boolean
+          title: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expense_id?: string | null
+          id?: string
+          message?: string
+          read?: boolean
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_expense_id_fkey"
+            columns: ["expense_id"]
+            isOneToOne: false
+            referencedRelation: "expenses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          company_id: string
+          created_at: string
+          email: string
+          id: string
+          manager_id: string | null
+          name: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          email: string
+          id: string
+          manager_id?: string | null
+          name: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          manager_id?: string | null
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "profiles_manager_id_fkey"
+            columns: ["manager_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_roles_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "manager" | "employee"
+      expense_status: "draft" | "pending" | "approved" | "rejected" | "paid"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +413,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "manager", "employee"],
+      expense_status: ["draft", "pending", "approved", "rejected", "paid"],
+    },
   },
 } as const
